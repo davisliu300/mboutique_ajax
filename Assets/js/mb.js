@@ -32,7 +32,6 @@ var input_validation = {
 };
 
 $("document").ready(function(){
-
 //do stuff when the document is ready!
 /*$(".main-nav li a").each(function(){
         //do something to each item found
@@ -58,8 +57,7 @@ function create_menu(){
                 load_page(my_page.pageUrl);
             });
         })();
-        li.append(a);
-        //a.appendTo(li);
+        li.append(a);       //a.appendTo(li);
         main_nav_ul.append(li);
         if(pages[index].default==true){
             load_page(pages[index].pageUrl);
@@ -67,53 +65,82 @@ function create_menu(){
     }
 }
 
-
 function load_page(page_url){
     //load the indicated page into the #main_content section
     $.get(page_url,function(data){
         $("#main_content").html(data);
-    });
-    
+    });    
 }
 function validate_contact(){
-console.log("validation contact 2nd line testing ");
-    var contact_inputs = $("#contact_form input, #contact_form textarea");
-//    console.log(contact_inputs);
-    //keep track of how many errors there are
-
-    $("#contact_form .error_msg").remove();
-	console.log("validation contact 2nd line testing ");
-    $(contact_inputs).each(function(){
         //input_validation[$(this).attr('name')];  
 		//beginnings of USING the object for input validation
-		
-		if (contact_inputs.match(input_validation[$(this).attr('name')].regex)!== null ){
-			console.log("ok pass");
-		}else {
-			console.log("else message in contact_inputs algorithm");
-		}
+    var contact_inputs = $("#contact_form input, #contact_form textarea");
+    $("#contact_form .error_msg .alert .alert-danger").parent().remove();
+	var was_focused=false;
+    $(contact_inputs).each(function(){
+//	console.log("i am contact_inputs" ,contact_inputs);
+	$("#contact_form .error_msg .alert .alert-danger").remove();
+			var indexObj = $(this).attr('name');
+//			console.log("this is the name of the indxobj: " + indexObj);
+			var this_inputs = $(this).val();
+			var this_formRegex = input_validation[indexObj].regex;			
 			
- //       input_validation[$(this).attr('name')];
+			if (this_formRegex.test(this_inputs) == true ){
+				console.log("ok pass");	
+				send_message(this_inputs);
+			}else {
+				thisErrorMsg = input_validation[indexObj].error_msg;
+//				console.log("erromsg in else statement is: " + thisErrorMsg);
+				warning_message(thisErrorMsg, this);
+				if(!was_focused){
+					was_focused=true;
+					this.focus();
+				}
+			}
 //		console.log('this is from form validation '+input_validation[$(this).attr('name')]);
-		console.log(input_validation[$(this).attr('name')]);
-		
-//		$(this).focus();
-		
+//		console.log(input_validation[$(this).attr('name')]);
+//		$(this).focus();		
     });
-	
-//    console.log("error count " +error_count);
-
-		if(str.match(regex)===null){ //if there was a validation error
-                //alert($(this).attr('name')+":"+error_msg); //send error message
-                var error_span = $("<span/>").addClass('error_msg').text(error_msg);
-                error_span.insertAfter($(this));
-                //$(this).parent().find('.error_msg').html(error_msg);
-                error_count++;  //increase error count
-            }
+//	return false;
 }
 
-function send_message(){  //dummy function for sending message
-    console.log('to be continued...');
+function warning_message(this_error, this_location){  
+//    console.log('to be continued...');
+//	console.log("mssage erro variable is : " + this_error);
+
+	(function(){
+	$('#contact_form').on('click', 'button', function(){
+		$('#contact_form alert alert-danger').remove();
+		console.log("ok selfie");
+		});
+	})();
+	
+	$('#contact_form alert').parent().remove();
+//	console.log('deleing the following class div' ,$('#contact_form alert').parent());
+	var error_div = $("<div/>").addClass('alert alert-danger').text(this_error);
+	var close_btn = $("<button/>",{type:'button',class:'close',"data-dismiss":'alert','aria-label':'Close'});
+	var span = $("<span/>",{'aria-hidden':'true'}).html('&times;');
+	close_btn.append(span);
+	error_div.append(close_btn);
+				
+	error_div.insertAfter($(this_location));
+}
+
+	var msgArray = [];
+function send_message(this_inputs){  //dummy function for sending message
+//    console.log('to be continued...');
+
+	msgArray.push(this_inputs);
+//	console.log('msg Arragy includse ;:: '+msgArray);
+
+	var successMsg = $("<div/>").css(
+		{
+		padding: '20px',
+		dispaly: 'inline-block'
+	}).addClass('alert alert-success').text(msgArray);
+	
+//	console.log(successMsg);
+	$('#contact_form').html(successMsg);
 }
 
 
